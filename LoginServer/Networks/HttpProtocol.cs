@@ -7,17 +7,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace LoginServer.Networks
-{
-    /*
-     * HTTP 웹 서버
-     *  - 호 : 인증서버
-     */     
+{     
     class HttpProtocol
     {
-        public static HttpListener listener = new HttpListener();
+        public static HttpListener listener = new HttpListener();      
 
         public HttpProtocol(String url)
-        {
+        {            
             listener.Prefixes.Add(url);
             Console.WriteLine($"[INFO] > {url} >> Listener START");
             listener.Start();            
@@ -33,28 +29,49 @@ namespace LoginServer.Networks
 
             while (runServer)
             {                
-                HttpListenerContext context = await listener.GetContextAsync();
+                HttpListenerContext context = await listener.GetContextAsync(); //대기 시작
                 HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
+                HttpListenerResponse response = context.Response;                         
+
                 string reqData = StreamData(request.InputStream);
-                Console.WriteLine("[Connection Detect] : {0} -> {1} ", request.RemoteEndPoint.Address, request.HttpMethod);
-                Console.WriteLine(request.RawUrl);
-                // response
-                /*byte[] responseToken = Encoding.UTF8.GetBytes(String.Format("접속 불가"));
-                response.ContentType = "text/html; charset=utf-8";
-                response.ContentLength64 = responseToken.LongLength;
-                await response.OutputStream.WriteAsync(responseToken, 0, responseToken.Length);
-                response.Close();*/
+
+                if (request.HttpMethod == "GET" && !request.Url.ToString().Contains("favicon.ico"))
+                {                    
+                    Console.WriteLine("\n[ INFO ] : {0} \n {1} \n GET Connection!", request.RemoteEndPoint.Address, request.Url);
+                    byte[] responseError = Encoding.UTF8.GetBytes(String.Format("Access Denied!"));
+                    response.ContentType = "text/html; charset=utf-8";
+                    response.ContentLength64 = responseError.LongLength;
+                    await response.OutputStream.WriteAsync(responseError, 0, responseError.Length);
+                    response.Close();
+                }
+
+                if (!request.Url.ToString().Contains("favicon.ico") && request.HttpMethod == "POST")
+                {
+                    Console.WriteLine("\n[Connection Detect] : {0} \n Method Type :{1} \n {2} \n", request.Url, request.HttpMethod, reqData);
+                    // 데이터 분리 작업 TODO
+                }
+                    
+                
+
+                if (request.HttpMethod == "POST")
+                {
+                    Random rand = new Random();
+                    byte[] responseToken = Encoding.UTF8.GetBytes(String.Format("{0}", rand.Next()));
+                    response.ContentType = "text/html; charset=utf-8";
+                    response.ContentLength64 = responseToken.LongLength;
+                    await response.OutputStream.WriteAsync(responseToken, 0, responseToken.Length);
+                    response.Close();
+                }      
             }
         }
         public static string StreamData(Stream stream)
         {
-            string reqSData = string.Empty;
+            string reqData = string.Empty;
             StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-            reqSData = reader.ReadToEnd();
+            reqData = reader.ReadToEnd();
             reader.Close();
-            reader.Dispose();
-            return reqSData;
+            reader.Dispose();            
+            return reqData;
         }
     }
 }
