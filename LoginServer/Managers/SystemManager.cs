@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text;
-using LoginServer.Protocols;
+using System.Threading;
 using LoginServer.Utility;
 
 
 namespace LoginServer.Managers
-{
-    
+{    
     class SystemManager
     {        
         public SystemManager()
@@ -28,19 +27,21 @@ namespace LoginServer.Managers
             switch (select)
             {
                 case "1":
-                    HttpProtocol httpProtocol = new HttpProtocol();
+                    Console.Clear();
+                    new NetworkManager(host, port, select);
                     break;
                 case "2":
-                    Console.WriteLine("2");
+                    Console.WriteLine("TODO");
                     Console.ReadLine();
                     break;
                 case "3":
-                    Console.WriteLine("3");
+                    Console.WriteLine("TODO");
                     Console.ReadLine();
                     break;
                 case "4":
-                    Console.WriteLine("4");
-                    Console.ReadLine();
+                    Console.WriteLine("잠시 후 종료 됩니다.");
+                    Thread.Sleep(3000);
+                    Environment.Exit(0);
                     break;
             }
         }
