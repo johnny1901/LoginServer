@@ -5,6 +5,8 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LoginServer.Utility;
+using static LoginServer.Networks.Request;
 
 namespace LoginServer.Networks
 {     
@@ -37,18 +39,27 @@ namespace LoginServer.Networks
 
                 if (request.HttpMethod == "GET" && !request.Url.ToString().Contains("favicon.ico"))
                 {                    
-                    Console.WriteLine("\n[ INFO ] : {0} \n {1} \n GET Connection!", request.RemoteEndPoint.Address, request.Url);
-                    byte[] responseError = Encoding.UTF8.GetBytes(String.Format("Access Denied!"));
-                    response.ContentType = "text/html; charset=utf-8";
-                    response.ContentLength64 = responseError.LongLength;
-                    await response.OutputStream.WriteAsync(responseError, 0, responseError.Length);
-                    response.Close();
+                    //Console.WriteLine("\n[ INFO ] : {0} \n {1} \n GET Connection!", request.RemoteEndPoint.Address, request.Url);
+                    //byte[] responseError = Encoding.UTF8.GetBytes(String.Format("Access Denied!"));
+                    //response.ContentType = "text/html; charset=utf-8";
+                    //response.ContentLength64 = responseError.LongLength;
+                    //await response.OutputStream.WriteAsync(responseError, 0, responseError.Length);
+                    //response.Close();
                 }
 
                 if (!request.Url.ToString().Contains("favicon.ico") && request.HttpMethod == "POST")
                 {
-                    Console.WriteLine("\n[Connection Detect] : {0} \n Method Type :{1} \n {2} \n", request.Url, request.HttpMethod, reqData);
-                    // 데이터 분리 작업 TODO
+                    //Console.WriteLine("\nㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+                    //Console.WriteLine("\n[Connection Detect] : {0} \n Method Type :{1} \n {2}", request.Url, request.HttpMethod, reqData);
+                    //Console.WriteLine("\nㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
+
+                    // 데이터 전달
+                    Request req = new Request();
+                    req.RequestData(
+                        request.Url.ToString(),
+                        request.HttpMethod.ToString(),
+                        reqData,
+                        request.RemoteEndPoint.Address.ToString());                     
                 }
                     
                 

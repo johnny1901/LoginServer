@@ -6,5 +6,6 @@ namespace LoginServer.Networks
 {
     class Reponse
     {
+        
     }
 }
