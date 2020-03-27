@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 
 namespace LoginServer.Networks
 {
-    class Request 
-    {   
+    class Validation
+    {
         public void RequestData(String url, String method, String reqData, String userIP)
         {
             Random rand = new Random();
@@ -17,7 +16,11 @@ namespace LoginServer.Networks
             Console.WriteLine("SALT: > {0}", rand.Next());
             Console.WriteLine("***************************************\n");
 
+            if (reqData.Equals(string.Empty))
+            {
+                
+            }
+
         }
-             
     }
 }
